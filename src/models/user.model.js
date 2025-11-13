@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { VALID_SKILLS } = require("../constants/skills.constants");
 
 const userSchema = new mongoose.Schema(
   {
@@ -61,6 +62,74 @@ const userSchema = new mongoose.Schema(
       },
       lowercase: true,
     },
+    // Professional Profile Fields (Optional)
+    skills: {
+      type: [String],
+      validate: {
+        validator: function (skills) {
+          // Check if array has max 10 items
+          if (skills.length > 10) {
+            return false;
+          }
+          // Check if all skills are valid
+          return skills.every((skill) => VALID_SKILLS.includes(skill));
+        },
+        message:
+          "Skills must be from the predefined list and maximum 10 skills allowed",
+      },
+    },
+    bio: {
+      type: String,
+      trim: true,
+      minlength: [100, "Bio must be at least 100 characters long"],
+      maxlength: [500, "Bio cannot exceed 500 characters"],
+    },
+    currentPosition: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Current position cannot exceed 100 characters"],
+    },
+    currentOrganisation: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Current organisation cannot exceed 100 characters"],
+    },
+    location: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Location cannot exceed 100 characters"],
+    },
+    // Profile Media
+    profilePhoto: {
+      type: String,
+      trim: true,
+      match: [
+        /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg)$/i,
+        "Please provide a valid image URL",
+      ],
+    },
+    // Social & Portfolio Links (Optional)
+    githubUrl: {
+      type: String,
+      trim: true,
+      match: [
+        /^https?:\/\/(www\.)?github\.com\/.+$/,
+        "Please provide a valid GitHub URL",
+      ],
+    },
+    linkedinUrl: {
+      type: String,
+      trim: true,
+      match: [
+        /^https?:\/\/(www\.)?linkedin\.com\/.+$/,
+        "Please provide a valid LinkedIn URL",
+      ],
+    },
+    portfolioUrl: {
+      type: String,
+      trim: true,
+      match: [/^https?:\/\/.+\..+$/, "Please provide a valid portfolio URL"],
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
@@ -97,4 +166,3 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
-

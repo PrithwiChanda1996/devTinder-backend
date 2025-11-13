@@ -1,0 +1,111 @@
+/**
+ * Predefined list of valid skills for developer profiles
+ * Users can select up to 10 skills from this list
+ */
+const VALID_SKILLS = [
+  // Programming Languages
+  "JavaScript",
+  "TypeScript",
+  "Python",
+  "Java",
+  "C++",
+  "C#",
+  "Go",
+  "Rust",
+  "Ruby",
+  "PHP",
+  "Swift",
+  "Kotlin",
+  "Dart",
+  "Scala",
+  "R",
+  "Perl",
+  "Elixir",
+  "Haskell",
+
+  // Frontend Technologies
+  "React",
+  "Angular",
+  "Vue.js",
+  "Svelte",
+  "Next.js",
+  "Nuxt.js",
+  "HTML",
+  "CSS",
+  "SASS",
+  "Tailwind CSS",
+  "Bootstrap",
+  "jQuery",
+  "Redux",
+  "MobX",
+
+  // Backend Technologies
+  "Node.js",
+  "Express.js",
+  "Nest.js",
+  "Django",
+  "Flask",
+  "FastAPI",
+  "Spring Boot",
+  "ASP.NET",
+  "Laravel",
+  "Ruby on Rails",
+  "Gin",
+  "Fiber",
+
+  // Databases
+  "MongoDB",
+  "PostgreSQL",
+  "MySQL",
+  "Redis",
+  "Cassandra",
+  "SQLite",
+  "Oracle",
+  "DynamoDB",
+  "Firebase",
+  "Supabase",
+  "Elasticsearch",
+
+  // Cloud & DevOps
+  "AWS",
+  "Azure",
+  "Google Cloud",
+  "Docker",
+  "Kubernetes",
+  "Jenkins",
+  "GitLab CI",
+  "GitHub Actions",
+  "Terraform",
+  "Ansible",
+  "CircleCI",
+
+  // Mobile Development
+  "React Native",
+  "Flutter",
+  "iOS Development",
+  "Android Development",
+  "Xamarin",
+
+  // Tools & Others
+  "Git",
+  "GraphQL",
+  "REST API",
+  "Webpack",
+  "Vite",
+  "Testing",
+  "Jest",
+  "Cypress",
+  "Selenium",
+  "Microservices",
+  "System Design",
+  "Agile",
+  "Scrum",
+  "Machine Learning",
+  "Data Science",
+  "Blockchain",
+  "Web3",
+  "AI/ML",
+];
+
+module.exports = { VALID_SKILLS };
+
