@@ -308,39 +308,22 @@ const updateProfileSchema = Joi.object({
       "any.only": "Please provide valid skills from the predefined list",
     }),
 
-  bio: Joi.string()
-    .trim()
-    .min(100)
-    .max(500)
-    .optional()
-    .messages({
-      "string.min": "Bio must be at least 100 characters long",
-      "string.max": "Bio cannot exceed 500 characters",
-    }),
+  bio: Joi.string().trim().min(100).max(500).optional().messages({
+    "string.min": "Bio must be at least 100 characters long",
+    "string.max": "Bio cannot exceed 500 characters",
+  }),
 
-  currentPosition: Joi.string()
-    .trim()
-    .max(100)
-    .optional()
-    .messages({
-      "string.max": "Current position cannot exceed 100 characters",
-    }),
+  currentPosition: Joi.string().trim().max(100).optional().messages({
+    "string.max": "Current position cannot exceed 100 characters",
+  }),
 
-  currentOrganisation: Joi.string()
-    .trim()
-    .max(100)
-    .optional()
-    .messages({
-      "string.max": "Current organisation cannot exceed 100 characters",
-    }),
+  currentOrganisation: Joi.string().trim().max(100).optional().messages({
+    "string.max": "Current organisation cannot exceed 100 characters",
+  }),
 
-  location: Joi.string()
-    .trim()
-    .max(100)
-    .optional()
-    .messages({
-      "string.max": "Location cannot exceed 100 characters",
-    }),
+  location: Joi.string().trim().max(100).optional().messages({
+    "string.max": "Location cannot exceed 100 characters",
+  }),
 
   // Profile Media
   profilePhoto: Joi.string()
@@ -350,7 +333,8 @@ const updateProfileSchema = Joi.object({
     .optional()
     .messages({
       "string.uri": "Please provide a valid URL",
-      "string.pattern.base": "Please provide a valid image URL (jpg, jpeg, png, gif, webp, svg)",
+      "string.pattern.base":
+        "Please provide a valid image URL (jpg, jpeg, png, gif, webp, svg)",
     }),
 
   // Social & Portfolio Links
@@ -374,16 +358,14 @@ const updateProfileSchema = Joi.object({
       "string.pattern.base": "Please provide a valid LinkedIn URL",
     }),
 
-  portfolioUrl: Joi.string()
-    .trim()
-    .uri()
-    .optional()
-    .messages({
-      "string.uri": "Please provide a valid portfolio URL",
-    }),
-}).min(1).messages({
-  "object.min": "At least one field must be provided for update",
-});
+  portfolioUrl: Joi.string().trim().uri().optional().messages({
+    "string.uri": "Please provide a valid portfolio URL",
+  }),
+})
+  .min(1)
+  .messages({
+    "object.min": "At least one field must be provided for update",
+  });
 
 // Validation middleware for profile update
 const validateUpdateProfile = (req, res, next) => {

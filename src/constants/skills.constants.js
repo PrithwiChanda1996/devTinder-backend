@@ -108,4 +108,3 @@ const VALID_SKILLS = [
 ];
 
 module.exports = { VALID_SKILLS };
-

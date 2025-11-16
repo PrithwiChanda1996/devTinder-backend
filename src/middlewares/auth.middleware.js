@@ -18,7 +18,9 @@ const authenticate = (req, res, next) => {
 
     // Check if Authorization header exists and starts with "Bearer "
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      const error = new Error("Authentication required. Please provide a valid token");
+      const error = new Error(
+        "Authentication required. Please provide a valid token"
+      );
       error.statusCode = 401;
       return next(error);
     }
@@ -42,4 +44,3 @@ const authenticate = (req, res, next) => {
 };
 
 module.exports = { authenticate };
-
