@@ -3,14 +3,15 @@ const jwt = require("jsonwebtoken");
 const { jwtConfig } = require("../config/config");
 
 /**
- * Check if a user exists by email or username
+ * Check if a user exists by email, username, or mobile number
  * @param {string} email - User email
  * @param {string} username - Username
+ * @param {string} mobileNumber - User mobile number
  * @returns {Promise<Object|null>} - Existing user or null
  */
-const findExistingUser = async (email, username) => {
+const findExistingUser = async (email, username, mobileNumber) => {
   return await User.findOne({
-    $or: [{ email }, { username }],
+    $or: [{ email }, { username }, { mobileNumber }],
   });
 };
 
@@ -70,23 +71,39 @@ const generateToken = (user) => {
  * @throws {Error} - If user already exists or validation fails
  */
 const registerUser = async (userData) => {
-  const { email, username } = userData;
+  const { email, username, mobileNumber } = userData;
 
   // Check if user already exists
-  const existingUser = await findExistingUser(email, username);
+  const existingUser = await findExistingUser(email, username, mobileNumber);
 
   if (existingUser) {
-    if (existingUser.email === email) {
-      const error = new Error("User with this email already exists");
-      error.statusCode = 409;
-      error.field = "email";
-      throw error;
-    }
-    if (existingUser.username === username) {
-      const error = new Error("Username is already taken");
-      error.statusCode = 409;
-      error.field = "username";
-      throw error;
+    // Define field configurations for duplicate checks
+    const duplicateChecks = [
+      {
+        field: "email",
+        value: email,
+        message: "User with this email already exists",
+      },
+      {
+        field: "username",
+        value: username,
+        message: "Username is already taken",
+      },
+      {
+        field: "mobileNumber",
+        value: mobileNumber,
+        message: "Mobile number is already registered",
+      },
+    ];
+
+    // Check each field for duplicates
+    for (const check of duplicateChecks) {
+      if (existingUser[check.field] === check.value) {
+        const error = new Error(check.message);
+        error.statusCode = 409;
+        error.field = check.field;
+        throw error;
+      }
     }
   }
 
