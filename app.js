@@ -1,4 +1,5 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const connectDB = require("./src/config/connection");
 
 const app = express();
@@ -7,6 +8,9 @@ const port = 3000;
 // Middleware to parse JSON request bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware to parse cookies
+app.use(cookieParser());
 
 // Import all routes
 const routes = require("./src/routes");
