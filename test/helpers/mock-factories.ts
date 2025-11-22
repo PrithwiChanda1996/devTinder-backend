@@ -67,6 +67,28 @@ export const createMockModel = (mockData: any) => {
   return model;
 };
 
+export const createMockMongooseModel = (mockData?: any) => {
+  const model: any = jest.fn().mockImplementation((dto) => ({
+    ...(mockData || {}),
+    ...dto,
+    save: jest.fn().mockResolvedValue({ ...(mockData || {}), ...dto }),
+  }));
+
+  model.findOne = jest.fn();
+  model.findById = jest.fn();
+  model.find = jest.fn();
+  model.findByIdAndDelete = jest.fn();
+  model.findByIdAndUpdate = jest.fn();
+  model.updateOne = jest.fn();
+  model.updateMany = jest.fn();
+  model.deleteOne = jest.fn();
+  model.deleteMany = jest.fn();
+  model.create = jest.fn();
+  model.countDocuments = jest.fn();
+
+  return model;
+};
+
 export const mockJwtService = () => ({
   sign: jest.fn().mockReturnValue('mock-jwt-token'),
   verify: jest.fn().mockReturnValue({ id: '507f1f77bcf86cd799439011', username: 'johndoe', email: 'john.doe@example.com' }),

@@ -37,6 +37,7 @@ async function bootstrap() {
     .setVersion("1.0")
     .addTag("auth", "Authentication endpoints")
     .addTag("users", "User management endpoints")
+    .addTag("connections", "Connection request endpoints")
     .addTag("health", "Health check endpoint")
     .addBearerAuth(
       {
