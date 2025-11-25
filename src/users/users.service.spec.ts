@@ -173,7 +173,7 @@ describe('UsersService', () => {
     const user3Id = '507f1f77bcf86cd799439013';
     const user4Id = '507f1f77bcf86cd799439014';
 
-    it('should return users excluding self', async () => {
+    it('should return random users excluding self with default limit', async () => {
       connectionModel.find.mockResolvedValue([]);
       
       const suggestedUsers = [
@@ -183,7 +183,7 @@ describe('UsersService', () => {
       
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
-      const result = await service.getSuggestions(userId);
+      const result = await service.getSuggestions(userId, 10);
 
       expect(connectionModel.find).toHaveBeenCalledWith({
         $or: [
@@ -210,7 +210,7 @@ describe('UsersService', () => {
       const suggestedUsers = [{ _id: user3Id, firstName: 'Bob', lastName: 'Smith' }];
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
-      const result = await service.getSuggestions(userId);
+      const result = await service.getSuggestions(userId, 10);
 
       expect(result).toEqual(suggestedUsers);
       expect(result.some((u: any) => u._id === user2Id)).toBe(false);
@@ -230,7 +230,7 @@ describe('UsersService', () => {
       const suggestedUsers = [{ _id: user3Id, firstName: 'Bob', lastName: 'Smith' }];
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
-      const result = await service.getSuggestions(userId);
+      const result = await service.getSuggestions(userId, 10);
 
       expect(result).toEqual(suggestedUsers);
       expect(result.some((u: any) => u._id === user2Id)).toBe(false);
@@ -250,7 +250,7 @@ describe('UsersService', () => {
       const suggestedUsers = [{ _id: user3Id, firstName: 'Bob', lastName: 'Smith' }];
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
-      const result = await service.getSuggestions(userId);
+      const result = await service.getSuggestions(userId, 10);
 
       expect(result).toEqual(suggestedUsers);
       expect(result.some((u: any) => u._id === user2Id)).toBe(false);
@@ -275,7 +275,7 @@ describe('UsersService', () => {
       const suggestedUsers = [{ _id: user4Id, firstName: 'Alice', lastName: 'Johnson' }];
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
-      const result = await service.getSuggestions(userId);
+      const result = await service.getSuggestions(userId, 10);
 
       expect(result).toEqual(suggestedUsers);
       expect(result.some((u: any) => u._id === user2Id)).toBe(false);
@@ -286,37 +286,59 @@ describe('UsersService', () => {
       connectionModel.find.mockResolvedValue([]);
       userModel.aggregate.mockResolvedValue([]);
 
-      const result = await service.getSuggestions(userId);
+      const result = await service.getSuggestions(userId, 10);
 
       expect(result).toEqual([]);
       expect(result.length).toBe(0);
     });
 
-    it('should use random sampling in aggregation', async () => {
+    it('should use $sample for random results', async () => {
       connectionModel.find.mockResolvedValue([]);
       userModel.aggregate.mockResolvedValue([]);
 
-      await service.getSuggestions(userId);
+      await service.getSuggestions(userId, 15);
 
       const aggregateCall = userModel.aggregate.mock.calls[0][0];
       expect(aggregateCall).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({ $sample: { size: 1000 } }),
-          expect.objectContaining({ $project: { password: 0 } }),
+          expect.objectContaining({ $sample: { size: 15 } }),
+          expect.objectContaining({ 
+            $project: { 
+              password: 0, 
+              createdAt: 0, 
+              updatedAt: 0, 
+              __v: 0 
+            } 
+          }),
         ])
       );
     });
 
-    it('should exclude password field from results', async () => {
+    it('should exclude sensitive and metadata fields from results', async () => {
       connectionModel.find.mockResolvedValue([]);
       userModel.aggregate.mockResolvedValue([]);
 
-      await service.getSuggestions(userId);
+      await service.getSuggestions(userId, 10);
 
       const aggregateCall = userModel.aggregate.mock.calls[0][0];
       const projectStage = aggregateCall.find((stage: any) => stage.$project);
       expect(projectStage).toBeDefined();
       expect(projectStage.$project.password).toBe(0);
+      expect(projectStage.$project.createdAt).toBe(0);
+      expect(projectStage.$project.updatedAt).toBe(0);
+      expect(projectStage.$project.__v).toBe(0);
+    });
+
+    it('should respect custom limit parameter', async () => {
+      connectionModel.find.mockResolvedValue([]);
+      userModel.aggregate.mockResolvedValue([]);
+
+      await service.getSuggestions(userId, 20);
+
+      const aggregateCall = userModel.aggregate.mock.calls[0][0];
+      const sampleStage = aggregateCall.find((stage: any) => stage.$sample);
+      expect(sampleStage).toBeDefined();
+      expect(sampleStage.$sample.size).toBe(20);
     });
   });
 });

@@ -99,7 +99,7 @@ describe('UsersController', () => {
   });
 
   describe('getSuggestions', () => {
-    it('should return suggestions with count and success response', async () => {
+    it('should return random suggestions', async () => {
       const userId = '507f1f77bcf86cd799439011';
       const suggestions = [
         { _id: '507f1f77bcf86cd799439012', firstName: 'Jane', lastName: 'Doe' },
@@ -108,12 +108,11 @@ describe('UsersController', () => {
       
       usersService.getSuggestions.mockResolvedValue(suggestions as any);
 
-      const result = await controller.getSuggestions(userId);
+      const result = await controller.getSuggestions(userId, 10);
 
-      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId);
+      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId, 10);
       expect(result).toEqual({
         success: true,
-        count: 2,
         data: suggestions,
       });
     });
@@ -122,24 +121,67 @@ describe('UsersController', () => {
       const userId = '507f1f77bcf86cd799439011';
       usersService.getSuggestions.mockResolvedValue([]);
 
-      const result = await controller.getSuggestions(userId);
+      const result = await controller.getSuggestions(userId, 10);
 
-      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId);
+      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId, 10);
       expect(result).toEqual({
         success: true,
-        count: 0,
         data: [],
       });
     });
 
-    it('should call service with correct user ID from JWT', async () => {
+    it('should call service with correct user ID and limit', async () => {
       const userId = '507f1f77bcf86cd799439011';
       usersService.getSuggestions.mockResolvedValue([]);
 
-      await controller.getSuggestions(userId);
+      await controller.getSuggestions(userId, 20);
 
-      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId);
+      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId, 20);
       expect(usersService.getSuggestions).toHaveBeenCalledTimes(1);
+    });
+
+    it('should use default limit when not provided', async () => {
+      const userId = '507f1f77bcf86cd799439011';
+      usersService.getSuggestions.mockResolvedValue([]);
+
+      await controller.getSuggestions(userId, undefined);
+
+      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId, 10);
+    });
+
+    it('should enforce maximum limit of 50', async () => {
+      const userId = '507f1f77bcf86cd799439011';
+      usersService.getSuggestions.mockResolvedValue([]);
+
+      await controller.getSuggestions(userId, 100);
+
+      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId, 50);
+    });
+
+    it('should enforce minimum limit of 1', async () => {
+      const userId = '507f1f77bcf86cd799439011';
+      usersService.getSuggestions.mockResolvedValue([]);
+
+      await controller.getSuggestions(userId, -5);
+
+      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId, 1);
+    });
+
+    it('should handle custom limit values', async () => {
+      const userId = '507f1f77bcf86cd799439011';
+      const suggestions = [
+        { _id: '507f1f77bcf86cd799439012', firstName: 'Jane', lastName: 'Doe' },
+      ];
+      
+      usersService.getSuggestions.mockResolvedValue(suggestions);
+
+      const result = await controller.getSuggestions(userId, 15);
+
+      expect(usersService.getSuggestions).toHaveBeenCalledWith(userId, 15);
+      expect(result).toEqual({
+        success: true,
+        data: suggestions,
+      });
     });
   });
 });
