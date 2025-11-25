@@ -7,11 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import {
-  Connection,
-  ConnectionDocument,
-  ConnectionStatus,
-} from './entities/connection.entity';
+import { Connection, ConnectionDocument, ConnectionStatus } from './entities/connection.entity';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -22,10 +18,7 @@ export class ConnectionsService {
     private usersService: UsersService,
   ) {}
 
-  async sendConnectionRequest(
-    fromUserId: string,
-    toUserId: string,
-  ): Promise<ConnectionDocument> {
+  async sendConnectionRequest(fromUserId: string, toUserId: string): Promise<ConnectionDocument> {
     // Validate not sending to self
     if (fromUserId === toUserId) {
       throw new BadRequestException('Cannot send connection request to yourself');
@@ -89,10 +82,7 @@ export class ConnectionsService {
     return connection.save();
   }
 
-  async acceptConnection(
-    connectionId: string,
-    userId: string,
-  ): Promise<ConnectionDocument> {
+  async acceptConnection(connectionId: string, userId: string): Promise<ConnectionDocument> {
     // Validate MongoDB ObjectId format
     if (!Types.ObjectId.isValid(connectionId)) {
       throw new BadRequestException('Invalid connection ID format');
@@ -106,16 +96,12 @@ export class ConnectionsService {
 
     // Verify user is the receiver
     if (connection.toUserId.toString() !== userId) {
-      throw new ForbiddenException(
-        'Forbidden - You are not authorized to perform this action',
-      );
+      throw new ForbiddenException('Forbidden - You are not authorized to perform this action');
     }
 
     // Verify status is pending
     if (connection.status !== ConnectionStatus.PENDING) {
-      throw new BadRequestException(
-        `Cannot accept connection with status: ${connection.status}`,
-      );
+      throw new BadRequestException(`Cannot accept connection with status: ${connection.status}`);
     }
 
     // Check for block status (shouldn't exist but double-check)
@@ -131,10 +117,7 @@ export class ConnectionsService {
     return connection.save();
   }
 
-  async rejectConnection(
-    connectionId: string,
-    userId: string,
-  ): Promise<ConnectionDocument> {
+  async rejectConnection(connectionId: string, userId: string): Promise<ConnectionDocument> {
     // Validate MongoDB ObjectId format
     if (!Types.ObjectId.isValid(connectionId)) {
       throw new BadRequestException('Invalid connection ID format');
@@ -148,16 +131,12 @@ export class ConnectionsService {
 
     // Verify user is the receiver
     if (connection.toUserId.toString() !== userId) {
-      throw new ForbiddenException(
-        'Forbidden - You are not authorized to perform this action',
-      );
+      throw new ForbiddenException('Forbidden - You are not authorized to perform this action');
     }
 
     // Verify status is pending
     if (connection.status !== ConnectionStatus.PENDING) {
-      throw new BadRequestException(
-        `Cannot reject connection with status: ${connection.status}`,
-      );
+      throw new BadRequestException(`Cannot reject connection with status: ${connection.status}`);
     }
 
     connection.status = ConnectionStatus.REJECTED;
@@ -178,25 +157,18 @@ export class ConnectionsService {
 
     // Verify user is the sender
     if (connection.fromUserId.toString() !== userId) {
-      throw new ForbiddenException(
-        'Forbidden - You are not authorized to perform this action',
-      );
+      throw new ForbiddenException('Forbidden - You are not authorized to perform this action');
     }
 
     // Verify status is pending
     if (connection.status !== ConnectionStatus.PENDING) {
-      throw new BadRequestException(
-        `Cannot cancel connection with status: ${connection.status}`,
-      );
+      throw new BadRequestException(`Cannot cancel connection with status: ${connection.status}`);
     }
 
     await this.connectionModel.findByIdAndDelete(connectionId);
   }
 
-  async blockUser(
-    userId: string,
-    targetUserId: string,
-  ): Promise<ConnectionDocument> {
+  async blockUser(userId: string, targetUserId: string): Promise<ConnectionDocument> {
     // Validate not blocking self
     if (userId === targetUserId) {
       throw new BadRequestException('Cannot block yourself');
@@ -372,4 +344,3 @@ export class ConnectionsService {
     return !!blockExists;
   }
 }
-

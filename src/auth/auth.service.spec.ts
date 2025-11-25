@@ -5,7 +5,12 @@ import { AuthService } from './auth.service';
 import { TokensService } from '../tokens/tokens.service';
 import { User } from '../users/entities/user.entity';
 import { createMockModel, mockUser } from '../../test/helpers/mock-factories';
-import { validSignupDto, validLoginDto, validLoginWithUsernameDto, validLoginWithMobileDto } from '../../test/helpers/test-fixtures';
+import {
+  validSignupDto,
+  validLoginDto,
+  validLoginWithUsernameDto,
+  validLoginWithMobileDto,
+} from '../../test/helpers/test-fixtures';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -14,7 +19,7 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const mockUserModel = createMockModel(mockUser());
-    
+
     const mockTokensService = {
       generateAccessToken: jest.fn().mockReturnValue('mock-access-token'),
       generateRefreshToken: jest.fn().mockReturnValue('mock-refresh-token'),
@@ -110,9 +115,9 @@ describe('AuthService', () => {
     });
 
     it('should throw ConflictException for duplicate username', async () => {
-      const existingUser = mockUser({ 
+      const existingUser = mockUser({
         email: 'different@example.com',
-        username: validSignupDto.username 
+        username: validSignupDto.username,
       });
       userModel.findOne.mockResolvedValue(existingUser);
 
@@ -122,10 +127,10 @@ describe('AuthService', () => {
     });
 
     it('should throw ConflictException for duplicate mobile number', async () => {
-      const existingUser = mockUser({ 
+      const existingUser = mockUser({
         email: 'different@example.com',
         username: 'differentuser',
-        mobileNumber: validSignupDto.mobileNumber 
+        mobileNumber: validSignupDto.mobileNumber,
       });
       userModel.findOne.mockResolvedValue(existingUser);
 
@@ -158,7 +163,9 @@ describe('AuthService', () => {
 
       const result = await service.login(validLoginWithUsernameDto, 'Mozilla/5.0', '127.0.0.1');
 
-      expect(userModel.findOne).toHaveBeenCalledWith({ username: validLoginWithUsernameDto.username.toLowerCase() });
+      expect(userModel.findOne).toHaveBeenCalledWith({
+        username: validLoginWithUsernameDto.username.toLowerCase(),
+      });
       expect(result.user.accessToken).toBe('mock-access-token');
     });
 
@@ -168,7 +175,9 @@ describe('AuthService', () => {
 
       const result = await service.login(validLoginWithMobileDto, 'Mozilla/5.0', '127.0.0.1');
 
-      expect(userModel.findOne).toHaveBeenCalledWith({ mobileNumber: validLoginWithMobileDto.mobileNumber });
+      expect(userModel.findOne).toHaveBeenCalledWith({
+        mobileNumber: validLoginWithMobileDto.mobileNumber,
+      });
       expect(result.user.accessToken).toBe('mock-access-token');
     });
 
@@ -269,4 +278,3 @@ describe('AuthService', () => {
     });
   });
 });
-

@@ -102,4 +102,3 @@ export class SignupDto {
   @Transform(({ value }) => value?.toLowerCase())
   gender?: string;
 }
-

@@ -105,7 +105,7 @@ describe('UsersController', () => {
         { _id: '507f1f77bcf86cd799439012', firstName: 'Jane', lastName: 'Doe' },
         { _id: '507f1f77bcf86cd799439013', firstName: 'Bob', lastName: 'Smith' },
       ];
-      
+
       usersService.getSuggestions.mockResolvedValue(suggestions as any);
 
       const result = await controller.getSuggestions(userId, 10);
@@ -169,10 +169,8 @@ describe('UsersController', () => {
 
     it('should handle custom limit values', async () => {
       const userId = '507f1f77bcf86cd799439011';
-      const suggestions = [
-        { _id: '507f1f77bcf86cd799439012', firstName: 'Jane', lastName: 'Doe' },
-      ];
-      
+      const suggestions = [{ _id: '507f1f77bcf86cd799439012', firstName: 'Jane', lastName: 'Doe' }];
+
       usersService.getSuggestions.mockResolvedValue(suggestions);
 
       const result = await controller.getSuggestions(userId, 15);
@@ -185,4 +183,3 @@ describe('UsersController', () => {
     });
   });
 });
-

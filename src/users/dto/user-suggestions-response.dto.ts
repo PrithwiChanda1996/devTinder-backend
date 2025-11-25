@@ -117,4 +117,3 @@ export class UserSuggestionDto {
   })
   createdAt: Date;
 }
-

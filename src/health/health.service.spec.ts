@@ -5,7 +5,6 @@ import { mockConnection } from '../../test/helpers/mock-factories';
 
 describe('HealthService', () => {
   let service: HealthService;
-  let connection: any;
 
   const createModule = async (readyState: number) => {
     const mockConn = mockConnection(readyState);
@@ -21,7 +20,6 @@ describe('HealthService', () => {
     }).compile();
 
     service = module.get<HealthService>(HealthService);
-    connection = module.get(getConnectionToken());
 
     return module;
   };
@@ -125,4 +123,3 @@ describe('HealthService', () => {
     });
   });
 });
-

@@ -93,7 +93,11 @@ export const createMockMongooseModel = (mockData?: any) => {
 
 export const mockJwtService = () => ({
   sign: jest.fn().mockReturnValue('mock-jwt-token'),
-  verify: jest.fn().mockReturnValue({ id: '507f1f77bcf86cd799439011', username: 'johndoe', email: 'john.doe@example.com' }),
+  verify: jest.fn().mockReturnValue({
+    id: '507f1f77bcf86cd799439011',
+    username: 'johndoe',
+    email: 'john.doe@example.com',
+  }),
   decode: jest.fn(),
 });
 
@@ -142,4 +146,3 @@ export const mockExecutionContext = (user = null, params = {}, body = {}) => ({
   getClass: jest.fn(),
   getHandler: jest.fn(),
 });
-

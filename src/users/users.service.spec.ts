@@ -126,9 +126,9 @@ describe('UsersService', () => {
         save: jest.fn().mockResolvedValue(true),
       };
       const updatedUser = { ...user, ...validUpdateUserDto };
-      
+
       userModel.findById.mockResolvedValueOnce(user);
-      
+
       const selectMock = jest.fn().mockResolvedValue(updatedUser);
       userModel.findById.mockReturnValueOnce({ select: selectMock });
 
@@ -154,13 +154,13 @@ describe('UsersService', () => {
         lastName: 'Name',
         save: jest.fn().mockResolvedValue(true),
       };
-      
+
       userModel.findById.mockResolvedValueOnce(user);
-      
+
       const selectMock = jest.fn().mockResolvedValue({ ...user, ...validUpdateUserDto });
       userModel.findById.mockReturnValueOnce({ select: selectMock });
 
-      const result = await service.updateProfile('507f1f77bcf86cd799439011', validUpdateUserDto);
+      await service.updateProfile('507f1f77bcf86cd799439011', validUpdateUserDto);
 
       expect(user.save).toHaveBeenCalled();
       expect(selectMock).toHaveBeenCalledWith('-password');
@@ -175,21 +175,27 @@ describe('UsersService', () => {
 
     it('should return random users excluding self with default limit', async () => {
       connectionModel.find.mockResolvedValue([]);
-      
+
       const suggestedUsers = [
         { _id: user2Id, firstName: 'Jane', lastName: 'Doe' },
         { _id: user3Id, firstName: 'Bob', lastName: 'Smith' },
       ];
-      
+
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
       const result = await service.getSuggestions(userId, 10);
 
       expect(connectionModel.find).toHaveBeenCalledWith({
         $or: [
-          { fromUserId: new Types.ObjectId(userId), status: { $in: ['pending', 'accepted', 'blocked'] } },
-          { toUserId: new Types.ObjectId(userId), status: { $in: ['pending', 'accepted', 'blocked'] } }
-        ]
+          {
+            fromUserId: new Types.ObjectId(userId),
+            status: { $in: ['pending', 'accepted', 'blocked'] },
+          },
+          {
+            toUserId: new Types.ObjectId(userId),
+            status: { $in: ['pending', 'accepted', 'blocked'] },
+          },
+        ],
       });
       expect(userModel.aggregate).toHaveBeenCalled();
       expect(result).toEqual(suggestedUsers);
@@ -204,9 +210,9 @@ describe('UsersService', () => {
           status: 'pending',
         },
       ];
-      
+
       connectionModel.find.mockResolvedValue(connections);
-      
+
       const suggestedUsers = [{ _id: user3Id, firstName: 'Bob', lastName: 'Smith' }];
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
@@ -224,9 +230,9 @@ describe('UsersService', () => {
           status: 'pending',
         },
       ];
-      
+
       connectionModel.find.mockResolvedValue(connections);
-      
+
       const suggestedUsers = [{ _id: user3Id, firstName: 'Bob', lastName: 'Smith' }];
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
@@ -244,9 +250,9 @@ describe('UsersService', () => {
           status: 'accepted',
         },
       ];
-      
+
       connectionModel.find.mockResolvedValue(connections);
-      
+
       const suggestedUsers = [{ _id: user3Id, firstName: 'Bob', lastName: 'Smith' }];
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
@@ -269,9 +275,9 @@ describe('UsersService', () => {
           status: 'blocked',
         },
       ];
-      
+
       connectionModel.find.mockResolvedValue(connections);
-      
+
       const suggestedUsers = [{ _id: user4Id, firstName: 'Alice', lastName: 'Johnson' }];
       userModel.aggregate.mockResolvedValue(suggestedUsers);
 
@@ -302,15 +308,15 @@ describe('UsersService', () => {
       expect(aggregateCall).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ $sample: { size: 15 } }),
-          expect.objectContaining({ 
-            $project: { 
-              password: 0, 
-              createdAt: 0, 
-              updatedAt: 0, 
-              __v: 0 
-            } 
+          expect.objectContaining({
+            $project: {
+              password: 0,
+              createdAt: 0,
+              updatedAt: 0,
+              __v: 0,
+            },
           }),
-        ])
+        ]),
       );
     });
 
@@ -342,4 +348,3 @@ describe('UsersService', () => {
     });
   });
 });
-

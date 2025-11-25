@@ -66,10 +66,7 @@ describe('ConnectionsService', () => {
       connectionModel.findOne.mockResolvedValue(null);
       connectionModel.mockReturnValue(mockConnection);
 
-      const result = await service.sendConnectionRequest(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.sendConnectionRequest(mockUserId, mockTargetUserId);
 
       expect(usersService.findById).toHaveBeenCalledWith(mockUserId);
       expect(usersService.findById).toHaveBeenCalledWith(mockTargetUserId);
@@ -78,9 +75,9 @@ describe('ConnectionsService', () => {
     });
 
     it('should throw BadRequestException when sending to self', async () => {
-      await expect(
-        service.sendConnectionRequest(mockUserId, mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.sendConnectionRequest(mockUserId, mockUserId)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw ConflictException if pending request already exists', async () => {
@@ -94,9 +91,9 @@ describe('ConnectionsService', () => {
       usersService.findById.mockResolvedValue({ _id: mockUserId });
       connectionModel.findOne.mockResolvedValue(existingConnection);
 
-      await expect(
-        service.sendConnectionRequest(mockUserId, mockTargetUserId),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.sendConnectionRequest(mockUserId, mockTargetUserId)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw ConflictException if reverse pending request exists', async () => {
@@ -110,12 +107,8 @@ describe('ConnectionsService', () => {
       usersService.findById.mockResolvedValue({ _id: mockUserId });
       connectionModel.findOne.mockResolvedValue(existingConnection);
 
-      await expect(
-        service.sendConnectionRequest(mockUserId, mockTargetUserId),
-      ).rejects.toThrow(
-        new ConflictException(
-          'User has already sent you a request. Please accept/reject it first',
-        ),
+      await expect(service.sendConnectionRequest(mockUserId, mockTargetUserId)).rejects.toThrow(
+        new ConflictException('User has already sent you a request. Please accept/reject it first'),
       );
     });
 
@@ -130,9 +123,9 @@ describe('ConnectionsService', () => {
       usersService.findById.mockResolvedValue({ _id: mockUserId });
       connectionModel.findOne.mockResolvedValue(existingConnection);
 
-      await expect(
-        service.sendConnectionRequest(mockUserId, mockTargetUserId),
-      ).rejects.toThrow(new ConflictException('Already connected'));
+      await expect(service.sendConnectionRequest(mockUserId, mockTargetUserId)).rejects.toThrow(
+        new ConflictException('Already connected'),
+      );
     });
 
     it('should throw ForbiddenException if user is blocked', async () => {
@@ -146,9 +139,9 @@ describe('ConnectionsService', () => {
       usersService.findById.mockResolvedValue({ _id: mockUserId });
       connectionModel.findOne.mockResolvedValue(existingConnection);
 
-      await expect(
-        service.sendConnectionRequest(mockUserId, mockTargetUserId),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.sendConnectionRequest(mockUserId, mockTargetUserId)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should allow resending after rejection', async () => {
@@ -173,14 +166,9 @@ describe('ConnectionsService', () => {
       connectionModel.findByIdAndDelete.mockResolvedValue(existingConnection);
       connectionModel.mockReturnValue(mockConnection);
 
-      const result = await service.sendConnectionRequest(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.sendConnectionRequest(mockUserId, mockTargetUserId);
 
-      expect(connectionModel.findByIdAndDelete).toHaveBeenCalledWith(
-        'connection123',
-      );
+      expect(connectionModel.findByIdAndDelete).toHaveBeenCalledWith('connection123');
       expect(result).toBeDefined();
     });
   });
@@ -201,27 +189,24 @@ describe('ConnectionsService', () => {
       connectionModel.findById.mockResolvedValue(mockConnection);
       connectionModel.findOne.mockResolvedValue(null); // No block
 
-      const result = await service.acceptConnection(
-        mockConnectionId,
-        mockTargetUserId,
-      );
+      const result = await service.acceptConnection(mockConnectionId, mockTargetUserId);
 
       expect(mockConnection.save).toHaveBeenCalled();
       expect(result.status).toBe(ConnectionStatus.ACCEPTED);
     });
 
     it('should throw BadRequestException for invalid connection ID', async () => {
-      await expect(
-        service.acceptConnection('invalid-id', mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.acceptConnection('invalid-id', mockUserId)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw NotFoundException if connection does not exist', async () => {
       connectionModel.findById.mockResolvedValue(null);
 
-      await expect(
-        service.acceptConnection(mockConnectionId, mockUserId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.acceptConnection(mockConnectionId, mockUserId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException if user is not the receiver', async () => {
@@ -234,9 +219,9 @@ describe('ConnectionsService', () => {
 
       connectionModel.findById.mockResolvedValue(mockConnection);
 
-      await expect(
-        service.acceptConnection(mockConnectionId, mockUserId),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.acceptConnection(mockConnectionId, mockUserId)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should throw BadRequestException if status is not pending', async () => {
@@ -249,9 +234,9 @@ describe('ConnectionsService', () => {
 
       connectionModel.findById.mockResolvedValue(mockConnection);
 
-      await expect(
-        service.acceptConnection(mockConnectionId, mockTargetUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.acceptConnection(mockConnectionId, mockTargetUserId)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -270,10 +255,7 @@ describe('ConnectionsService', () => {
 
       connectionModel.findById.mockResolvedValue(mockConnection);
 
-      const result = await service.rejectConnection(
-        mockConnectionId,
-        mockTargetUserId,
-      );
+      const result = await service.rejectConnection(mockConnectionId, mockTargetUserId);
 
       expect(result.status).toBe(ConnectionStatus.REJECTED);
     });
@@ -288,9 +270,9 @@ describe('ConnectionsService', () => {
 
       connectionModel.findById.mockResolvedValue(mockConnection);
 
-      await expect(
-        service.rejectConnection(mockConnectionId, mockUserId),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.rejectConnection(mockConnectionId, mockUserId)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
@@ -308,23 +290,21 @@ describe('ConnectionsService', () => {
 
       await service.cancelRequest(mockConnectionId, mockUserId);
 
-      expect(connectionModel.findByIdAndDelete).toHaveBeenCalledWith(
-        mockConnectionId,
-      );
+      expect(connectionModel.findByIdAndDelete).toHaveBeenCalledWith(mockConnectionId);
     });
 
     it('should throw BadRequestException for invalid connection ID', async () => {
-      await expect(
-        service.cancelRequest('invalid-id', mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.cancelRequest('invalid-id', mockUserId)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw NotFoundException if connection does not exist', async () => {
       connectionModel.findById.mockResolvedValue(null);
 
-      await expect(
-        service.cancelRequest(mockConnectionId, mockUserId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.cancelRequest(mockConnectionId, mockUserId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException if user is not the sender', async () => {
@@ -337,9 +317,9 @@ describe('ConnectionsService', () => {
 
       connectionModel.findById.mockResolvedValue(mockConnection);
 
-      await expect(
-        service.cancelRequest(mockConnectionId, mockTargetUserId),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.cancelRequest(mockConnectionId, mockTargetUserId)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should throw BadRequestException if status is not pending', async () => {
@@ -352,9 +332,9 @@ describe('ConnectionsService', () => {
 
       connectionModel.findById.mockResolvedValue(mockConnection);
 
-      await expect(
-        service.cancelRequest(mockConnectionId, mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.cancelRequest(mockConnectionId, mockUserId)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -380,9 +360,7 @@ describe('ConnectionsService', () => {
     });
 
     it('should throw BadRequestException when blocking self', async () => {
-      await expect(service.blockUser(mockUserId, mockUserId)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.blockUser(mockUserId, mockUserId)).rejects.toThrow(BadRequestException);
     });
 
     it('should throw ConflictException if user is already blocked', async () => {
@@ -396,9 +374,9 @@ describe('ConnectionsService', () => {
       usersService.findById.mockResolvedValue({ _id: mockTargetUserId });
       connectionModel.findOne.mockResolvedValue(existingConnection);
 
-      await expect(
-        service.blockUser(mockUserId, mockTargetUserId),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.blockUser(mockUserId, mockTargetUserId)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should delete existing connection before blocking', async () => {
@@ -425,9 +403,7 @@ describe('ConnectionsService', () => {
 
       await service.blockUser(mockUserId, mockTargetUserId);
 
-      expect(connectionModel.findByIdAndDelete).toHaveBeenCalledWith(
-        'connection123',
-      );
+      expect(connectionModel.findByIdAndDelete).toHaveBeenCalledWith('connection123');
     });
   });
 
@@ -445,23 +421,21 @@ describe('ConnectionsService', () => {
 
       await service.unblockUser(mockUserId, mockTargetUserId);
 
-      expect(connectionModel.findByIdAndDelete).toHaveBeenCalledWith(
-        'connection123',
-      );
+      expect(connectionModel.findByIdAndDelete).toHaveBeenCalledWith('connection123');
     });
 
     it('should throw BadRequestException when unblocking self', async () => {
-      await expect(
-        service.unblockUser(mockUserId, mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.unblockUser(mockUserId, mockUserId)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw NotFoundException if no blocked connection found', async () => {
       connectionModel.findOne.mockResolvedValue(null);
 
-      await expect(
-        service.unblockUser(mockUserId, mockTargetUserId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.unblockUser(mockUserId, mockTargetUserId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -555,10 +529,7 @@ describe('ConnectionsService', () => {
     it('should return null status when no connection exists', async () => {
       connectionModel.findOne.mockResolvedValue(null);
 
-      const result = await service.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result.status).toBeNull();
       expect(result.message).toBe('No connection exists');
@@ -574,10 +545,7 @@ describe('ConnectionsService', () => {
 
       connectionModel.findOne.mockResolvedValue(mockConnection);
 
-      const result = await service.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result.status).toBe(ConnectionStatus.PENDING);
       expect(result.message).toBe('Connection request sent');
@@ -593,10 +561,7 @@ describe('ConnectionsService', () => {
 
       connectionModel.findOne.mockResolvedValue(mockConnection);
 
-      const result = await service.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result.status).toBe(ConnectionStatus.PENDING);
       expect(result.message).toBe('Connection request received');
@@ -612,10 +577,7 @@ describe('ConnectionsService', () => {
 
       connectionModel.findOne.mockResolvedValue(mockConnection);
 
-      const result = await service.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result.status).toBe(ConnectionStatus.ACCEPTED);
       expect(result.message).toBe('Connected');
@@ -631,10 +593,7 @@ describe('ConnectionsService', () => {
 
       connectionModel.findOne.mockResolvedValue(mockConnection);
 
-      const result = await service.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result.status).toBe(ConnectionStatus.BLOCKED);
       expect(result.message).toBe('User blocked');
@@ -650,10 +609,7 @@ describe('ConnectionsService', () => {
 
       connectionModel.findOne.mockResolvedValue(mockConnection);
 
-      const result = await service.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result.status).toBe(ConnectionStatus.BLOCKED);
       expect(result.message).toBe('Blocked by user');
@@ -668,10 +624,7 @@ describe('ConnectionsService', () => {
 
       connectionModel.findOne.mockResolvedValue(mockConnection);
 
-      const result = await service.checkBlockStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.checkBlockStatus(mockUserId, mockTargetUserId);
 
       expect(result).toBe(true);
     });
@@ -679,13 +632,9 @@ describe('ConnectionsService', () => {
     it('should return false if no block exists', async () => {
       connectionModel.findOne.mockResolvedValue(null);
 
-      const result = await service.checkBlockStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await service.checkBlockStatus(mockUserId, mockTargetUserId);
 
       expect(result).toBe(false);
     });
   });
 });
-

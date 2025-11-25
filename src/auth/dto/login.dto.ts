@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsEmail,
-  IsOptional,
-  Matches,
-  ValidateIf,
-} from 'class-validator';
+import { IsString, IsEmail, IsOptional, Matches, ValidateIf } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -48,9 +42,7 @@ export class LoginDto {
 
   @ValidateIf((o) => !o.email && !o.username && !o.mobileNumber)
   @IsString({
-    message:
-      'At least one identifier (email, username, or mobile) is required',
+    message: 'At least one identifier (email, username, or mobile) is required',
   })
   identifier?: string;
 }
-

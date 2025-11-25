@@ -41,4 +41,3 @@ export const VALID_SKILLS = [
   'Machine Learning',
   'Data Science',
 ];
-

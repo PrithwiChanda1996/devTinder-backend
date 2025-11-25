@@ -53,10 +53,7 @@ export class User {
     type: [String],
     validate: {
       validator: function (skills: string[]) {
-        return (
-          skills.length <= 10 &&
-          skills.every((skill) => VALID_SKILLS.includes(skill))
-        );
+        return skills.length <= 10 && skills.every((skill) => VALID_SKILLS.includes(skill));
       },
       message: 'Skills must be from predefined list and max 10 allowed',
     },
@@ -123,9 +120,6 @@ UserSchema.pre('save', async function (next) {
 });
 
 // Add comparePassword method to schema
-UserSchema.methods.comparePassword = async function (
-  candidatePassword: string,
-): Promise<boolean> {
+UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };
-

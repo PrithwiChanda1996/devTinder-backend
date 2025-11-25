@@ -4,7 +4,12 @@ import { ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { mockConfigService } from '../../test/helpers/mock-factories';
-import { validSignupDto, validLoginDto, mockRequest, mockResponse } from '../../test/helpers/test-fixtures';
+import {
+  validSignupDto,
+  validLoginDto,
+  mockRequest,
+  mockResponse,
+} from '../../test/helpers/test-fixtures';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -191,4 +196,3 @@ describe('AuthController', () => {
     });
   });
 });
-

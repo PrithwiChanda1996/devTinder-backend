@@ -39,4 +39,3 @@ export class PaginatedResponseDto<T> {
   })
   pagination: PaginationMetadata;
 }
-

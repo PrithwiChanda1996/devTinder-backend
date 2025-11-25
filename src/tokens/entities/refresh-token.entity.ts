@@ -31,4 +31,3 @@ RefreshTokenSchema.index({ token: 1 });
 RefreshTokenSchema.index({ userId: 1 });
 RefreshTokenSchema.index({ expiresAt: 1 });
 RefreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-

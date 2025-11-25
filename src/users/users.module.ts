@@ -17,4 +17,3 @@ import { Connection, ConnectionSchema } from '../connections/entities/connection
   exports: [UsersService],
 })
 export class UsersModule {}
-

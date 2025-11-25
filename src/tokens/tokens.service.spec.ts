@@ -5,13 +5,18 @@ import { ConfigService } from '@nestjs/config';
 import { getModelToken } from '@nestjs/mongoose';
 import { TokensService } from './tokens.service';
 import { RefreshToken } from './entities/refresh-token.entity';
-import { createMockModel, mockUser, mockRefreshToken, mockJwtService, mockConfigService } from '../../test/helpers/mock-factories';
+import {
+  createMockModel,
+  mockUser,
+  mockRefreshToken,
+  mockJwtService,
+  mockConfigService,
+} from '../../test/helpers/mock-factories';
 
 describe('TokensService', () => {
   let service: TokensService;
   let refreshTokenModel: any;
   let jwtService: jest.Mocked<JwtService>;
-  let configService: any;
 
   beforeEach(async () => {
     const mockRefreshTokenModel = createMockModel(mockRefreshToken());
@@ -67,7 +72,7 @@ describe('TokensService', () => {
 
     it('should include correct payload fields', () => {
       const user = mockUser();
-      
+
       service.generateAccessToken(user as any);
 
       expect(jwtService.sign).toHaveBeenCalledWith(
@@ -103,7 +108,7 @@ describe('TokensService', () => {
 
     it('should include type field in payload', () => {
       const user = mockUser();
-      
+
       service.generateRefreshToken(user as any);
 
       expect(jwtService.sign).toHaveBeenCalledWith(
@@ -148,7 +153,7 @@ describe('TokensService', () => {
 
       const expectedDate = new Date();
       expectedDate.setDate(expectedDate.getDate() + 7);
-      
+
       expect(capturedExpiresAt).toBeDefined();
       expect(capturedExpiresAt.getTime()).toBeGreaterThan(Date.now());
     });
@@ -177,8 +182,8 @@ describe('TokensService', () => {
     it('should successfully verify valid refresh token', async () => {
       const token = 'valid-refresh-token';
       const decoded = { id: '507f1f77bcf86cd799439011', type: 'refresh' };
-      const storedToken = mockRefreshToken({ 
-        token, 
+      const storedToken = mockRefreshToken({
+        token,
         userId: decoded.id,
         isRevoked: false,
         expiresAt: new Date(Date.now() + 86400000),
@@ -226,11 +231,6 @@ describe('TokensService', () => {
     it('should throw UnauthorizedException if token is revoked', async () => {
       const token = 'revoked-token';
       const decoded = { id: '507f1f77bcf86cd799439011', type: 'refresh' };
-      const storedToken = mockRefreshToken({ 
-        token, 
-        userId: decoded.id,
-        isRevoked: true,
-      });
 
       jwtService.verify.mockReturnValue(decoded);
       refreshTokenModel.findOne.mockResolvedValue(null);
@@ -243,8 +243,8 @@ describe('TokensService', () => {
     it('should throw UnauthorizedException if token is expired', async () => {
       const token = 'expired-token';
       const decoded = { id: '507f1f77bcf86cd799439011', type: 'refresh' };
-      const storedToken = mockRefreshToken({ 
-        token, 
+      const storedToken = mockRefreshToken({
+        token,
         userId: decoded.id,
         isRevoked: false,
         expiresAt: new Date(Date.now() - 86400000),
@@ -305,10 +305,7 @@ describe('TokensService', () => {
 
       await service.revokeRefreshToken(token);
 
-      expect(refreshTokenModel.updateOne).toHaveBeenCalledWith(
-        { token },
-        { isRevoked: true },
-      );
+      expect(refreshTokenModel.updateOne).toHaveBeenCalledWith({ token }, { isRevoked: true });
     });
   });
 
@@ -319,11 +316,7 @@ describe('TokensService', () => {
 
       await service.revokeAllUserTokens(userId);
 
-      expect(refreshTokenModel.updateMany).toHaveBeenCalledWith(
-        { userId },
-        { isRevoked: true },
-      );
+      expect(refreshTokenModel.updateMany).toHaveBeenCalledWith({ userId }, { isRevoked: true });
     });
   });
 });
-

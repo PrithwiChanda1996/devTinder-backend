@@ -11,13 +11,7 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { ConfigService } from '@nestjs/config';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiBody,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
@@ -49,18 +43,10 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const result = await this.authService.signup(
-      signupDto,
-      req.headers['user-agent'],
-      req.ip,
-    );
+    const result = await this.authService.signup(signupDto, req.headers['user-agent'], req.ip);
 
     // Set refresh token cookie
-    res.cookie(
-      'refreshToken',
-      result.refreshToken,
-      this.configService.get('cookie'),
-    );
+    res.cookie('refreshToken', result.refreshToken, this.configService.get('cookie'));
 
     return {
       success: true,
@@ -86,18 +72,10 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const result = await this.authService.login(
-      loginDto,
-      req.headers['user-agent'],
-      req.ip,
-    );
+    const result = await this.authService.login(loginDto, req.headers['user-agent'], req.ip);
 
     // Set refresh token cookie
-    res.cookie(
-      'refreshToken',
-      result.refreshToken,
-      this.configService.get('cookie'),
-    );
+    res.cookie('refreshToken', result.refreshToken, this.configService.get('cookie'));
 
     return {
       success: true,
@@ -122,9 +100,7 @@ export class AuthController {
       throw new UnauthorizedException('Refresh token not found');
     }
 
-    const accessToken = await this.authService.refreshAccessToken(
-      refreshToken,
-    );
+    const accessToken = await this.authService.refreshAccessToken(refreshToken);
 
     return {
       success: true,
@@ -140,10 +116,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Logout from current device' })
   @ApiResponse({ status: 200, description: 'Logged out successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized - invalid token' })
-  async logout(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies?.refreshToken;
     await this.authService.logout(refreshToken);
 
@@ -176,4 +149,3 @@ export class AuthController {
     };
   }
 }
-

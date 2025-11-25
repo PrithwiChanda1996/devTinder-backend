@@ -1,16 +1,9 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import {
-  RefreshToken,
-  RefreshTokenDocument,
-} from './entities/refresh-token.entity';
+import { RefreshToken, RefreshTokenDocument } from './entities/refresh-token.entity';
 import { UserDocument } from '../users/entities/user.entity';
 
 @Injectable()
@@ -84,9 +77,7 @@ export class TokensService {
       });
 
       if (!storedToken) {
-        throw new UnauthorizedException(
-          'Refresh token not found or has been revoked',
-        );
+        throw new UnauthorizedException('Refresh token not found or has been revoked');
       }
 
       if (storedToken.expiresAt < new Date()) {
@@ -112,4 +103,3 @@ export class TokensService {
     await this.refreshTokenModel.updateMany({ userId }, { isRevoked: true });
   }
 }
-

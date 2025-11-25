@@ -10,4 +10,3 @@ export class SendConnectionRequestDto {
   @IsMongoId({ message: 'Invalid user ID format' })
   toUserId: string;
 }
-

@@ -153,4 +153,3 @@ export class AuthService {
     await this.tokensService.revokeAllUserTokens(userId);
   }
 }
-

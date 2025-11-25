@@ -7,9 +7,7 @@ import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Connection.name, schema: ConnectionSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Connection.name, schema: ConnectionSchema }]),
     UsersModule,
   ],
   controllers: [ConnectionsController],
@@ -17,4 +15,3 @@ import { UsersModule } from '../users/users.module';
   exports: [ConnectionsService],
 })
 export class ConnectionsModule {}
-

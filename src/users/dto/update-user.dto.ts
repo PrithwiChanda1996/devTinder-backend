@@ -79,7 +79,8 @@ export class UpdateUserDto {
 
   @ApiPropertyOptional({
     description: 'Bio or description about the user',
-    example: 'Full-stack developer with 5 years of experience in building scalable web applications.',
+    example:
+      'Full-stack developer with 5 years of experience in building scalable web applications.',
     minLength: 100,
     maxLength: 500,
   })
@@ -171,4 +172,3 @@ export class UpdateUserDto {
   })
   portfolioUrl?: string;
 }
-

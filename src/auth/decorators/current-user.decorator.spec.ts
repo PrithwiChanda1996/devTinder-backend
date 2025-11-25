@@ -2,9 +2,10 @@ import { ExecutionContext } from '@nestjs/common';
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { CurrentUser } from './current-user.decorator';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function getParamDecoratorFactory(decorator: Function) {
   class TestDecorator {
-    public test(@decorator data: any) {}
+    public test(@decorator _data: any) {}
   }
 
   const args = Reflect.getMetadata(ROUTE_ARGS_METADATA, TestDecorator, 'test');
@@ -12,6 +13,7 @@ function getParamDecoratorFactory(decorator: Function) {
 }
 
 describe('CurrentUser Decorator', () => {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   let factory: Function;
   let mockExecutionContext: ExecutionContext;
 
@@ -109,4 +111,3 @@ describe('CurrentUser Decorator', () => {
     expect(result).toEqual({ id: '123', username: 'testuser' });
   });
 });
-

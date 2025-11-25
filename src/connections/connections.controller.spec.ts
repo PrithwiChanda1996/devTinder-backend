@@ -51,9 +51,7 @@ describe('ConnectionsController', () => {
         status: ConnectionStatus.PENDING,
       };
 
-      mockConnectionsService.sendConnectionRequest.mockResolvedValue(
-        mockConnection,
-      );
+      mockConnectionsService.sendConnectionRequest.mockResolvedValue(mockConnection);
 
       const result = await controller.sendConnectionRequest(mockUserId, {
         toUserId: mockTargetUserId,
@@ -61,10 +59,7 @@ describe('ConnectionsController', () => {
 
       expect(result.message).toBe('Connection request sent successfully');
       expect(result.data).toEqual(mockConnection);
-      expect(service.sendConnectionRequest).toHaveBeenCalledWith(
-        mockUserId,
-        mockTargetUserId,
-      );
+      expect(service.sendConnectionRequest).toHaveBeenCalledWith(mockUserId, mockTargetUserId);
     });
   });
 
@@ -77,21 +72,13 @@ describe('ConnectionsController', () => {
         status: ConnectionStatus.ACCEPTED,
       };
 
-      mockConnectionsService.acceptConnection.mockResolvedValue(
-        mockConnection,
-      );
+      mockConnectionsService.acceptConnection.mockResolvedValue(mockConnection);
 
-      const result = await controller.acceptConnection(
-        mockUserId,
-        'connection123',
-      );
+      const result = await controller.acceptConnection(mockUserId, 'connection123');
 
       expect(result.message).toBe('Connection request accepted successfully');
       expect(result.data).toEqual(mockConnection);
-      expect(service.acceptConnection).toHaveBeenCalledWith(
-        'connection123',
-        mockUserId,
-      );
+      expect(service.acceptConnection).toHaveBeenCalledWith('connection123', mockUserId);
     });
   });
 
@@ -104,21 +91,13 @@ describe('ConnectionsController', () => {
         status: ConnectionStatus.REJECTED,
       };
 
-      mockConnectionsService.rejectConnection.mockResolvedValue(
-        mockConnection,
-      );
+      mockConnectionsService.rejectConnection.mockResolvedValue(mockConnection);
 
-      const result = await controller.rejectConnection(
-        mockUserId,
-        'connection123',
-      );
+      const result = await controller.rejectConnection(mockUserId, 'connection123');
 
       expect(result.message).toBe('Connection request rejected successfully');
       expect(result.data).toEqual(mockConnection);
-      expect(service.rejectConnection).toHaveBeenCalledWith(
-        'connection123',
-        mockUserId,
-      );
+      expect(service.rejectConnection).toHaveBeenCalledWith('connection123', mockUserId);
     });
   });
 
@@ -129,10 +108,7 @@ describe('ConnectionsController', () => {
       const result = await controller.cancelRequest(mockUserId, 'connection123');
 
       expect(result.message).toBe('Connection request cancelled successfully');
-      expect(service.cancelRequest).toHaveBeenCalledWith(
-        'connection123',
-        mockUserId,
-      );
+      expect(service.cancelRequest).toHaveBeenCalledWith('connection123', mockUserId);
     });
   });
 
@@ -148,10 +124,7 @@ describe('ConnectionsController', () => {
       const result = await controller.blockUser(mockUserId, mockTargetUserId);
 
       expect(result.message).toBe('User blocked successfully');
-      expect(service.blockUser).toHaveBeenCalledWith(
-        mockUserId,
-        mockTargetUserId,
-      );
+      expect(service.blockUser).toHaveBeenCalledWith(mockUserId, mockTargetUserId);
     });
   });
 
@@ -162,10 +135,7 @@ describe('ConnectionsController', () => {
       const result = await controller.unblockUser(mockUserId, mockTargetUserId);
 
       expect(result.message).toBe('User unblocked successfully');
-      expect(service.unblockUser).toHaveBeenCalledWith(
-        mockUserId,
-        mockTargetUserId,
-      );
+      expect(service.unblockUser).toHaveBeenCalledWith(mockUserId, mockTargetUserId);
     });
   });
 
@@ -186,20 +156,14 @@ describe('ConnectionsController', () => {
         },
       ];
 
-      mockConnectionsService.getReceivedRequests.mockResolvedValue(
-        mockRequests,
-      );
+      mockConnectionsService.getReceivedRequests.mockResolvedValue(mockRequests);
 
       const result = await controller.getReceivedRequests(mockUserId);
 
-      expect(result.message).toBe(
-        'Received connection requests retrieved successfully',
-      );
+      expect(result.message).toBe('Received connection requests retrieved successfully');
       expect(result.count).toBe(2);
       expect(result.data).toEqual(mockRequests);
-      expect(service.getReceivedRequests).toHaveBeenCalledWith(
-        mockUserId,
-      );
+      expect(service.getReceivedRequests).toHaveBeenCalledWith(mockUserId);
     });
 
     it('should return empty array when no requests', async () => {
@@ -227,9 +191,7 @@ describe('ConnectionsController', () => {
 
       const result = await controller.getSentRequests(mockUserId);
 
-      expect(result.message).toBe(
-        'Sent connection requests retrieved successfully',
-      );
+      expect(result.message).toBe('Sent connection requests retrieved successfully');
       expect(result.count).toBe(1);
       expect(result.data).toEqual(mockRequests);
       expect(service.getSentRequests).toHaveBeenCalledWith(mockUserId);
@@ -253,9 +215,7 @@ describe('ConnectionsController', () => {
         },
       ];
 
-      mockConnectionsService.getConnections.mockResolvedValue(
-        mockConnections,
-      );
+      mockConnectionsService.getConnections.mockResolvedValue(mockConnections);
 
       const result = await controller.getConnections(mockUserId);
 
@@ -285,16 +245,10 @@ describe('ConnectionsController', () => {
 
       mockConnectionsService.getConnectionStatus.mockResolvedValue(mockStatus);
 
-      const result = await controller.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await controller.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result).toEqual(mockStatus);
-      expect(service.getConnectionStatus).toHaveBeenCalledWith(
-        mockUserId,
-        mockTargetUserId,
-      );
+      expect(service.getConnectionStatus).toHaveBeenCalledWith(mockUserId, mockTargetUserId);
     });
 
     it('should return connection status for pending received request', async () => {
@@ -306,10 +260,7 @@ describe('ConnectionsController', () => {
 
       mockConnectionsService.getConnectionStatus.mockResolvedValue(mockStatus);
 
-      const result = await controller.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await controller.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result).toEqual(mockStatus);
     });
@@ -323,10 +274,7 @@ describe('ConnectionsController', () => {
 
       mockConnectionsService.getConnectionStatus.mockResolvedValue(mockStatus);
 
-      const result = await controller.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await controller.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result).toEqual(mockStatus);
     });
@@ -340,10 +288,7 @@ describe('ConnectionsController', () => {
 
       mockConnectionsService.getConnectionStatus.mockResolvedValue(mockStatus);
 
-      const result = await controller.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await controller.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result).toEqual(mockStatus);
     });
@@ -357,13 +302,9 @@ describe('ConnectionsController', () => {
 
       mockConnectionsService.getConnectionStatus.mockResolvedValue(mockStatus);
 
-      const result = await controller.getConnectionStatus(
-        mockUserId,
-        mockTargetUserId,
-      );
+      const result = await controller.getConnectionStatus(mockUserId, mockTargetUserId);
 
       expect(result).toEqual(mockStatus);
     });
   });
 });
-

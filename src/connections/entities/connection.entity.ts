@@ -41,4 +41,3 @@ export const ConnectionSchema = SchemaFactory.createForClass(Connection);
 ConnectionSchema.index({ fromUserId: 1, toUserId: 1 }, { unique: true });
 ConnectionSchema.index({ toUserId: 1, status: 1 });
 ConnectionSchema.index({ fromUserId: 1, status: 1 });
-

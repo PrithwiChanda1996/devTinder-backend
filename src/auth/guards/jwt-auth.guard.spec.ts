@@ -15,7 +15,10 @@ describe('JwtAuthGuard', () => {
   describe('canActivate', () => {
     it('should call super.canActivate', async () => {
       const context = {} as ExecutionContext;
-      const superCanActivateSpy = jest.spyOn(Object.getPrototypeOf(JwtAuthGuard.prototype), 'canActivate');
+      const superCanActivateSpy = jest.spyOn(
+        Object.getPrototypeOf(JwtAuthGuard.prototype),
+        'canActivate',
+      );
       superCanActivateSpy.mockResolvedValue(true);
 
       const result = await guard.canActivate(context);
@@ -73,4 +76,3 @@ describe('JwtAuthGuard', () => {
     });
   });
 });
-

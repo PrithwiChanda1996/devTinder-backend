@@ -1,63 +1,53 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
-import { User, UserDocument } from "./entities/user.entity";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import {
-  Connection,
-  ConnectionDocument,
-} from "../connections/entities/connection.entity";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { User, UserDocument } from './entities/user.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Connection, ConnectionDocument } from '../connections/entities/connection.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Connection.name)
-    private connectionModel: Model<ConnectionDocument>
+    private connectionModel: Model<ConnectionDocument>,
   ) {}
 
   async findById(id: string): Promise<UserDocument> {
-    const user = await this.userModel.findById(id).select("-password");
+    const user = await this.userModel.findById(id).select('-password');
 
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
 
     return user;
   }
 
   async findByEmail(email: string): Promise<UserDocument> {
-    const user = await this.userModel
-      .findOne({ email: email.toLowerCase() })
-      .select("-password");
+    const user = await this.userModel.findOne({ email: email.toLowerCase() }).select('-password');
 
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
 
     return user;
   }
 
   async findByMobile(mobileNumber: string): Promise<UserDocument> {
-    const user = await this.userModel
-      .findOne({ mobileNumber })
-      .select("-password");
+    const user = await this.userModel.findOne({ mobileNumber }).select('-password');
 
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
 
     return user;
   }
 
-  async updateProfile(
-    userId: string,
-    updateUserDto: UpdateUserDto
-  ): Promise<UserDocument> {
+  async updateProfile(userId: string, updateUserDto: UpdateUserDto): Promise<UserDocument> {
     const user = await this.userModel.findById(userId);
 
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
 
     Object.assign(user, updateUserDto);
@@ -72,11 +62,11 @@ export class UsersService {
       $or: [
         {
           fromUserId: new Types.ObjectId(userId),
-          status: { $in: ["pending", "accepted", "blocked"] },
+          status: { $in: ['pending', 'accepted', 'blocked'] },
         },
         {
           toUserId: new Types.ObjectId(userId),
-          status: { $in: ["pending", "accepted", "blocked"] },
+          status: { $in: ['pending', 'accepted', 'blocked'] },
         },
       ],
     });
@@ -91,9 +81,7 @@ export class UsersService {
     });
 
     // Convert to ObjectId array for query
-    const excludedIds = Array.from(excludedUserIds).map(
-      (id) => new Types.ObjectId(id)
-    );
+    const excludedIds = Array.from(excludedUserIds).map((id) => new Types.ObjectId(id));
 
     // Get random users using $sample
     const users = await this.userModel.aggregate([

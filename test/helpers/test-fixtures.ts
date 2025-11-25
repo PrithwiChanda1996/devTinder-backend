@@ -29,7 +29,7 @@ export const validUpdateUserDto = {
   lastName: 'Smith',
   age: 30,
   gender: 'female' as const,
-  bio: 'Updated bio with more than 100 characters. This is a comprehensive bio that describes the user\'s experience and skills in detail. The user is passionate about technology.',
+  bio: "Updated bio with more than 100 characters. This is a comprehensive bio that describes the user's experience and skills in detail. The user is passionate about technology.",
   skills: ['Python', 'Django', 'PostgreSQL'],
   currentPosition: 'Lead Developer',
   currentOrganisation: 'New Company Ltd.',
@@ -68,4 +68,3 @@ export const mockResponse = () => {
   };
   return res;
 };
-
