@@ -19,7 +19,7 @@ export class HealthController {
         uptime: '3600s',
         database: {
           status: 'connected',
-          name: 'devTinder',
+          name: 'codematch',
         },
         environment: 'development',
         version: '1.0.0',

@@ -32,9 +32,9 @@ async function bootstrap() {
 
   // Swagger Configuration
   const config = new DocumentBuilder()
-    .setTitle('DevTinder API')
+    .setTitle('codematch API')
     .setDescription(
-      'DevTinder Backend API Documentation - Connect developers and build amazing teams',
+      'codematch Backend API Documentation - Connect developers and build amazing teams',
     )
     .setVersion('1.0')
     .addTag('auth', 'Authentication endpoints')
@@ -55,7 +55,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document, {
-    customSiteTitle: 'DevTinder API Docs',
+    customSiteTitle: 'codematch API Docs',
     customfavIcon: 'https://nestjs.com/img/logo-small.svg',
     customCss: '.swagger-ui .topbar { display: none }',
   });

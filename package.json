@@ -1,7 +1,7 @@
 {
-  "name": "devtinder-nestjs",
+  "name": "codematch-nestjs",
   "version": "1.0.0",
-  "description": "DevTinder Backend - NestJS TypeScript Version",
+  "description": "codematch Backend - NestJS TypeScript Version",
   "author": "Prithwi Chanda",
   "license": "ISC",
   "scripts": {

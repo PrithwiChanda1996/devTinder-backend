@@ -43,7 +43,7 @@ describe('HealthService', () => {
         uptime: expect.stringMatching(/^\d+s$/),
         database: {
           status: 'connected',
-          name: 'devTinder',
+          name: 'codematch',
         },
         environment: 'test',
         version: '1.0.0',
@@ -111,7 +111,7 @@ describe('HealthService', () => {
 
       const result = await service.getHealthStatus();
 
-      expect(result.database.name).toBe('devTinder');
+      expect(result.database.name).toBe('codematch');
     });
 
     it('should return version 1.0.0', async () => {

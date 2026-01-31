@@ -37,7 +37,7 @@ describe('HealthController', () => {
         uptime: '3600s',
         database: {
           status: 'connected',
-          name: 'devTinder',
+          name: 'codematch',
         },
         environment: 'test',
         version: '1.0.0',
@@ -58,7 +58,7 @@ describe('HealthController', () => {
         uptime: '100s',
         database: {
           status: 'disconnected',
-          name: 'devTinder',
+          name: 'codematch',
         },
         environment: 'production',
         version: '1.0.0',

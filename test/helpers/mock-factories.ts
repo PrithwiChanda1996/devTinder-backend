@@ -121,7 +121,7 @@ export const mockConfigService = () => ({
 
 export const mockConnection = (readyState = 1) => ({
   readyState,
-  name: 'devTinder',
+  name: 'codematch',
   host: 'localhost',
   port: 27017,
 });
