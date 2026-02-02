@@ -125,18 +125,6 @@ export class UpdateUserDto {
   location?: string;
 
   @ApiPropertyOptional({
-    description: 'Profile photo URL (must be a valid image URL)',
-    example: 'https://example.com/profile.jpg',
-    pattern: '^https?:\\/\\/.+\\.(jpg|jpeg|png|gif|webp|svg)$',
-  })
-  @IsOptional()
-  @IsString()
-  @Matches(/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg)$/i, {
-    message: 'Please provide a valid image URL',
-  })
-  profilePhoto?: string;
-
-  @ApiPropertyOptional({
     description: 'GitHub profile URL',
     example: 'https://github.com/johndoe',
     pattern: '^https?:\\/\\/(www\\.)?github\\.com\\/.+$',

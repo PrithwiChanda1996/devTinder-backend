@@ -56,6 +56,19 @@ export class UsersService {
     return this.findById(userId);
   }
 
+  async updateProfilePhoto(userId: string, photoUrl: string): Promise<UserDocument> {
+    const user = await this.userModel.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.profilePhoto = photoUrl;
+    await user.save();
+
+    return this.findById(userId);
+  }
+
   async getSuggestions(userId: string, limit: number = 10): Promise<any[]> {
     // Find all connections where user is involved with pending, accepted, or blocked status
     const connections = await this.connectionModel.find({

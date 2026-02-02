@@ -1,4 +1,19 @@
-import { Controller, Get, Patch, Param, Body, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Param,
+  Body,
+  UseGuards,
+  Query,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
@@ -7,6 +22,7 @@ import {
   ApiParam,
   ApiBody,
   ApiQuery,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -14,13 +30,18 @@ import { ProfileResponseDto } from './dto/profile-response.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OwnerGuard } from './guards/owner.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { S3Service } from '../common/services/s3.service';
+import { imageUploadOptions } from '../common/config/multer.config';
 
 @ApiTags('users')
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly s3Service: S3Service,
+  ) {}
 
   @Get('suggestions')
   @ApiOperation({
@@ -161,6 +182,82 @@ export class UsersController {
       success: true,
       message: 'Profile updated successfully',
       data: updatedUser,
+    };
+  }
+
+  @Post('profile/upload-photo')
+  @UseInterceptors(FileInterceptor('file', imageUploadOptions))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    summary: 'Upload profile photo to S3',
+    description:
+      'Upload and optimize profile photo. Frontend should send pre-cropped 400x400px square images. Backend will optimize compression and ensure max dimensions as a safeguard.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Profile photo (jpg, jpeg, png, gif, webp - max 5MB)',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Photo uploaded successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean', example: true },
+        message: { type: 'string', example: 'Profile photo uploaded successfully' },
+        data: {
+          type: 'object',
+          properties: {
+            photoUrl: {
+              type: 'string',
+              example:
+                'https://codematch-user-uploads.s3.ap-south-1.amazonaws.com/profile-photos/USER_ID-1234567890.jpg',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid file format or size' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - invalid token' })
+  async uploadProfilePhoto(
+    @CurrentUser('id') userId: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|gif|webp)$/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    // Get current user to check for existing photo
+    const user = await this.usersService.findById(userId);
+
+    // Upload new photo to S3
+    const photoUrl = await this.s3Service.uploadProfilePhoto(file, userId);
+
+    // Delete old photo from S3 if it exists and is an S3 URL
+    if (user.profilePhoto && user.profilePhoto.includes('s3.amazonaws.com')) {
+      await this.s3Service.deleteProfilePhoto(user.profilePhoto);
+    }
+
+    // Update user profile with new photo URL
+    await this.usersService.updateProfilePhoto(userId, photoUrl);
+
+    return {
+      success: true,
+      message: 'Profile photo uploaded successfully',
+      data: { photoUrl },
     };
   }
 }

@@ -4,6 +4,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { User, UserSchema } from './entities/user.entity';
 import { Connection, ConnectionSchema } from '../connections/entities/connection.entity';
+import { S3Service } from '../common/services/s3.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { Connection, ConnectionSchema } from '../connections/entities/connection
     ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, S3Service],
   exports: [UsersService],
 })
 export class UsersModule {}
